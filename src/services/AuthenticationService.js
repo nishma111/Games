@@ -1,27 +1,17 @@
 import * as firebase from 'firebase';
+
+import { AuthenticationDataFormatter } from '../utils';
+
 //Using firebase for google sign in
-const signInWithGoogle = (provider) => {
-  firebase
+const signInWithGoogle = async (provider) => {
+  return firebase
     .auth()
     .signInWithPopup(provider)
     .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      var token = result.credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-      return true;
+      return AuthenticationDataFormatter.parseLoginResponse(result);
     })
     .catch((error) => {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.log('Error', errorMessage);
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      // ...
-      return false;
+      throw Error(error);
     });
 };
 
@@ -45,21 +35,15 @@ const createWithEmailAndPassword = (email, password) => {
 };
 
 //Using Firebase for sign in
-const signInWithEmail = (email, password) => {
-  firebase
+const signInWithEmail = async (email, password) => {
+  return firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((result) => {
-      return console.log('User logged in');
-      //return true;
+      return AuthenticationDataFormatter.parseLoginResponseEmail(result);
     })
     .catch((error) => {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      return console.log('Error', errorMessage);
-      //return false;
-      // ...
+      throw Error(error);
     });
 };
 

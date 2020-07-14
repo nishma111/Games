@@ -14,9 +14,12 @@ import {
   TextField,
   InputAdornment,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 
 import LogoImg from '../../../assets/images/logo.jpg';
+
+import { ProfileContext } from '../../../store';
 
 import AuthenticationActions from '../../../actions/AuthenticationActions';
 
@@ -74,6 +77,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Authentication = (props) => {
+  const { profile, profileDispatch } = React.useContext(ProfileContext);
+
   const [values, setValues] = useState({ email: '', password: '' });
 
   const [passwordShown, setPasswordShown] = useState(false);
@@ -84,6 +89,14 @@ const Authentication = (props) => {
 
   const classes = useStyles();
   var provider = new firebase.auth.GoogleAuthProvider();
+
+  React.useEffect(() => {
+    // console.log('useEffect');
+    if (profile.status === 'ERROR') {
+      setValues({ email: '', password: '' });
+    }
+  }, [profile.status]);
+  // console.log('Authentication');
 
   return (
     <Grid
@@ -142,20 +155,18 @@ const Authentication = (props) => {
           }}
         />
       </Grid>
+      <Typography color="Error" variant="h6">
+        {profile.status === 'ERROR' ? `${profile.message}` : ''}
+      </Typography>
       <Grid item>
         <Button
           variant="contained"
           className={classes.button1}
           onClick={() => {
-            const result1 = AuthenticationActions.createWithEmail(
+            AuthenticationActions.createWithEmail(
               values.email,
               values.password
             );
-            if (result1) {
-              console.log('User created');
-            } else {
-              console.log('Failed to create');
-            }
           }}
         >
           Sign Up
@@ -164,15 +175,11 @@ const Authentication = (props) => {
           variant="contained"
           className={classes.button1}
           onClick={() => {
-            return AuthenticationActions.signInWithEmail(
+            AuthenticationActions.signInWithEmail(
               values.email,
-              values.password
+              values.password,
+              profileDispatch
             );
-            // if (result2) {
-            //   //console.log('User logged in');
-            // } else {
-            //   //console.log('Not able to log in!');
-            // }
           }}
         >
           Login
@@ -183,15 +190,14 @@ const Authentication = (props) => {
           variant="contained"
           className={classes.button2}
           onClick={() => {
-            return AuthenticationActions.signInWithGoogle(provider);
-            // if (result) {
-            //   console.log('success');
-            // } else {
-            //   console.log('failed');
-            // }
+            AuthenticationActions.signInWithGoogle(provider, profileDispatch);
           }}
         >
-          Login with Google
+          {profile.status === 'PENDING' ? (
+            <CircularProgress />
+          ) : (
+            `Login with Google`
+          )}
         </Button>
       </Grid>
     </Grid>

@@ -3,7 +3,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
-import { history, configureFirebase } from './store/configureStore';
+import { history, configureFirebase } from './store';
 import Root from './components/Root';
 
 configureFirebase();
