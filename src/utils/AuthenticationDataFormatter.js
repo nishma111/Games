@@ -9,7 +9,6 @@ const parseLoginResponse = (response) => {
 };
 
 const parseLoginResponseEmail = (response) => {
-  console.log(response);
   return {
     status: 'LOGGED_IN',
     name: response.user.displayName,

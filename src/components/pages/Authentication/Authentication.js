@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import * as firebase from 'firebase';
 
@@ -25,7 +26,7 @@ import AuthenticationActions from '../../../actions/AuthenticationActions';
 
 const useStyles = makeStyles((theme) => ({
   background: {
-    backgroundColor: '#800080',
+    backgroundColor: theme.palette.myBackground.primary,
     height: '100vh',
   },
   avatar: {
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(8),
   },
   header: {
-    color: '#FFFF00',
+    color: theme.palette.myText.primary,
     marginBottom: '40px',
   },
   emailInput: {
@@ -76,7 +77,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Authentication = (props) => {
+const Authentication = () => {
+  const history = useHistory();
   const { profile, profileDispatch } = React.useContext(ProfileContext);
 
   const [values, setValues] = useState({ email: '', password: '' });
@@ -91,12 +93,17 @@ const Authentication = (props) => {
   var provider = new firebase.auth.GoogleAuthProvider();
 
   React.useEffect(() => {
-    // console.log('useEffect');
     if (profile.status === 'ERROR') {
       setValues({ email: '', password: '' });
     }
+    if (profile.status === 'LOGGED_IN') {
+      if (history.location.state == undefined) {
+        history.push('/');
+      } else {
+        history.push(history.location.state.from.pathname);
+      }
+    }
   }, [profile.status]);
-  // console.log('Authentication');
 
   return (
     <Grid
@@ -148,14 +155,14 @@ const Authentication = (props) => {
             ),
             endAdornment: (
               <InputAdornment position="end" onClick={togglePasswordVisiblity}>
-                {passwordShown ? <Visibility /> : <VisibilityOff />}
+                {passwordShown ? <VisibilityOff /> : <Visibility />}
               </InputAdornment>
             ),
             disableUnderline: true,
           }}
         />
       </Grid>
-      <Typography color="Error" variant="h6">
+      <Typography color="error" variant="h6">
         {profile.status === 'ERROR' ? `${profile.message}` : ''}
       </Typography>
       <Grid item>

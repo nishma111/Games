@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import { AppProvider } from '../store';
+import { ThemeProvider } from '@material-ui/core';
 
 export default class Root extends Component {
   render() {
-    const { history } = this.props;
+    const { history, theme } = this.props;
     return (
       <AppProvider>
         <Router history={history}>
-          <App />
+          <ThemeProvider theme={theme}>
+            <App />
+          </ThemeProvider>
         </Router>
       </AppProvider>
     );

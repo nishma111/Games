@@ -51,10 +51,17 @@ const signInWithEmail = (email, password, dispatch) => {
     });
 };
 
+const logout = (dispatch) => {
+  dispatch({
+    type: LOGOUT,
+  });
+};
+
 const AuthenticationActions = {
   signInWithGoogle,
   createWithEmail,
   signInWithEmail,
+  logout,
 };
 
 export default AuthenticationActions;
